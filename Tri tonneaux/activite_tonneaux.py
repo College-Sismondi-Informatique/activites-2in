@@ -24,7 +24,10 @@ BALANCE_MILIEU = pygame.image.load('images/balance_milieu.png')
 BALANCE_GAUCHE = pygame.image.load('images/balance_gauche.png')
 BALANCE_DROIT = pygame.image.load('images/balance_droite.png')
 
-pauseLength = 0.001
+pauseLength = 0.05
+
+nComp = 0
+nSwitch = 0
 
 TRACE = False
 
@@ -161,6 +164,7 @@ def show_message(m):
     
 def move_tonneau(t, pos):
     global msg
+    i=0
     while abs(t.rect.centerx - pos[0]) > 1 or abs(t.rect.bottom - pos[1]) > 1:
         if  t.rect.centerx - pos[0] >= 1:
             t.rect.centerx = t.rect.centerx -1
@@ -170,9 +174,13 @@ def move_tonneau(t, pos):
             t.rect.bottom = t.rect.bottom -1
         else:
             t.rect.bottom = t.rect.bottom +1
-        display()
-        time.sleep(pauseLength/2)
+        
+        i+=1
+        if i%10==0:
+            display()
+            time.sleep(pauseLength)
         msg = "" # on remet à zero l'affichage
+    display()
 
 def etagere_vers_plateau_g(n):
     if etagere.tonneaux[n] == None:
@@ -215,12 +223,12 @@ def plateau_d_vers_etagere(n):
         else:
             move_tonneau(t, (40+50*n, HEIGHT-20))
             etagere.tonneaux[n] = t
-
+ 
 
 def peser_tonneau():
     r = balance.pese()
     display()
-    time.sleep(pauseLength*500)
+    time.sleep(pauseLength*10)
     return r
 
 def dispText(msg):
@@ -242,14 +250,56 @@ def display():
     all_sprites_list.draw(screen)
     dispText(msg)
     pygame.display.flip()
+    
+    
+def plus_lourd(a,b):
+    global nComp
+    etagere_vers_plateau_g(a)
+    etagere_vers_plateau_d(b)
+    
+    if peser_tonneau() == -1:
+        heavier = a
+    elif peser_tonneau() == +1:
+        heavier = b
+    else :
+        heavier = a
+    
+    plateau_g_vers_etagere(a)
+    plateau_d_vers_etagere(b)
+    
+    nComp+=1
+    return(heavier)
 
+def echanger(a,b):
+    global nSwitch, etagere
+    
+    if etagere.tonneaux[a] == None:
+        show_message("Il n'y a pas de tonneau à la position "+ str(a))
+    elif etagere.tonneaux[b] == None:
+        show_message("Il n'y a pas de tonneau à la position "+ str(b))
+    else:
+        move_tonneau(etagere.tonneaux[a], (40+50*a, HEIGHT-70))
+        move_tonneau(etagere.tonneaux[b], (40+50*b, HEIGHT-70))
+        move_tonneau(etagere.tonneaux[a], (40+50*b, HEIGHT-20))
+        move_tonneau(etagere.tonneaux[b], (40+50*a, HEIGHT-20))
+        
+        t = etagere.tonneaux[a]
+        etagere.tonneaux[a] = etagere.tonneaux[b]
+        etagere.tonneaux[b] = t
+    time.sleep(pauseLength*20)
+    nSwitch +=1
 
-def init(n):
+def init(n, speed = 1):
     '''
         param:
             n(int) : le nombre de tonneau 
     '''
-    global screen, WIDTH,POS_BALANCE, nb_tonneaux
+    global screen, WIDTH,POS_BALANCE, nb_tonneaux, pauseLength
+    
+    if speed == 0:
+        pauseLength = 0
+    else:
+        pauseLength /= speed
     
     nb_tonneaux = n
     
@@ -260,7 +310,9 @@ def init(n):
     pygame.init() 
     size = (WIDTH, HEIGHT) 
     screen = pygame.display.set_mode(size) 
-    pygame.display.set_caption("Activité trier des tonneaux") 
+    pygame.display.set_caption("Activité trier des tonneaux")
+    
+    initObjects()
 
 
 def initObjects():
@@ -285,11 +337,9 @@ def fin_activite():
     
     # on vérifie si les tonneaux sont bien triés
     if etagere.est_triee():
-        show_message("Félicitations, le tableau est trié!!!")
-        dispText("Félicitations, le tableau est trié!!!")
+        show_message("Félicitations, le tableau est trié avec "+str(nComp)+" comparaisons !")
     else:
         show_message("Échec, le tableau n'est pas trié...")
-        dispText("Échec, le tableau n'est pas trié...")
         
     
     exit = True
