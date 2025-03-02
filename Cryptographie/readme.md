@@ -33,3 +33,14 @@
 * Présentation RSA
 * Exercice facile
 * Si le temps le permet, ou cours supplémentaire, [lien vers les cryptomonnaies](https://docs.google.com/presentation/d/1PQCjVCFhfWAEPejf5hwIj23kK6lYRVmFnFBqVuWK7cU/)
+
+
+## Évalutation Regroupée - Champ
+
+* Concepts généraux de cryptographie symétrique (vocabulaire, limites)
+* Chiffrement de César
+* Chiffrement monoalphabétique
+* Chiffrement de Vigenère
+* Concepts généraux de cryptographie asymétrique (Diffie-Hellman, clés publiques/privées)
+* Compréhension basique de RSA (sans apprendre le calcul)
+* Compréhension basique du protocole HTTPS
