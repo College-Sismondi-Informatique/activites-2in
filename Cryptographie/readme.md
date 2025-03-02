@@ -32,6 +32,7 @@
 
 * Présentation RSA
 * Exercice facile
+* Présentation HTTPS 
 * Si le temps le permet, ou cours supplémentaire, [lien vers les cryptomonnaies](https://docs.google.com/presentation/d/1PQCjVCFhfWAEPejf5hwIj23kK6lYRVmFnFBqVuWK7cU/)
 
 
